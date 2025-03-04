@@ -15,7 +15,7 @@ An AI-powered tool for analyzing data reports using OpenAI's GPT-4 and Perplexit
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/Datasampublic.git
+git clone https://github.com/ginug/Datasampublic.git
 cd Datasampublic
 ```
 
