@@ -125,7 +125,7 @@ selected_model = st.sidebar.selectbox(
 st.sidebar.markdown("### 🔑 API Keys")
 st.sidebar.markdown("""
     <div class='api-key-input'>
-        Please enter your API keys below. They are required for the selected model.
+        Please enter your API key for the required model
     </div>
 """, unsafe_allow_html=True)
 
@@ -157,7 +157,10 @@ def get_client(model_name):
             st.error("⚠️ Please enter your OpenAI API key in the sidebar.")
             st.stop()
         try:
-            return OpenAI(api_key=api_key)  # OpenAI API uses default base URL
+            return OpenAI(
+                api_key=api_key,
+                base_url="https://api.openai.com/v1"
+            )
         except Exception as e:
             st.error(f"⚠️ Error initializing OpenAI client: {str(e)}")
             st.stop()
@@ -167,11 +170,10 @@ def get_client(model_name):
             st.error("⚠️ Please enter your Perplexity API key in the sidebar.")
             st.stop()
         try:
-            # Create a new OpenAI client with Perplexity's base URL
-            client = OpenAI()
-            client.base_url = config["base_url"]
-            client.api_key = api_key
-            return client
+            return OpenAI(
+                api_key=api_key,
+                base_url="https://api.perplexity.ai"
+            )
         except Exception as e:
             st.error(f"⚠️ Error initializing Perplexity client: {str(e)}")
             st.stop()
