@@ -170,10 +170,11 @@ def get_client(model_name):
             st.error("⚠️ Please enter your Perplexity API key in the sidebar.")
             st.stop()
         try:
-            return OpenAI(
-                api_key=api_key,
-                base_url="https://api.perplexity.ai"
-            )
+            # Create client without any proxy settings
+            client = OpenAI()
+            client.base_url = "https://api.perplexity.ai"
+            client.api_key = api_key
+            return client
         except Exception as e:
             st.error(f"⚠️ Error initializing Perplexity client: {str(e)}")
             st.stop()
