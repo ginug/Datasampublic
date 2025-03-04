@@ -168,8 +168,11 @@ def get_client(model_name):
             st.stop()
         try:
             return OpenAI(
+                api_key=api_key,
                 base_url=config["base_url"],
-                api_key=api_key
+                default_headers={
+                    "Authorization": f"Bearer {api_key}"
+                }
             )
         except Exception as e:
             st.error(f"⚠️ Error initializing Perplexity client: {str(e)}")
