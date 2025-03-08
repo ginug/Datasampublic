@@ -13,6 +13,8 @@ An AI-powered tool for analyzing data reports using OpenAI's GPT-4 and Perplexit
 
 ## Setup
 
+### Option 1: Local Setup
+
 1. Clone the repository:
 ```bash
 git clone https://github.com/ginug/Datasampublic.git
@@ -24,11 +26,31 @@ cd Datasampublic
 pip install -r requirements.txt
 ```
 
-## Running Locally
-
+3. Run the application:
 ```bash
 streamlit run Datasam.py
 ```
+
+### Option 2: Docker Setup
+
+1. Clone the repository:
+```bash
+git clone https://github.com/ginug/Datasampublic.git
+cd Datasampublic
+```
+
+2. Build and run using Docker Compose:
+```bash
+docker-compose up --build
+```
+
+Or using Docker directly:
+```bash
+docker build -t datasam .
+docker run -p 8501:8501 datasam
+```
+
+The application will be available at http://localhost:8501
 
 ## Usage
 
@@ -40,6 +62,40 @@ streamlit run Datasam.py
    - Perplexity API key for DeepSeek R1
 5. Click "Run Analysis" for automated insights
 6. Use the custom query section for specific questions
+
+## Development
+
+### Docker Development
+
+1. Start the development environment:
+```bash
+docker-compose up --build
+```
+
+2. The application will automatically reload when you make changes to the code.
+
+3. To stop the application:
+```bash
+docker-compose down
+```
+
+### Local Development
+
+1. Create a virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+2. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+3. Run the application:
+```bash
+streamlit run Datasam.py
+```
 
 ## Deployment
 

@@ -5,19 +5,19 @@ from openai import OpenAI
 import io
 import os
 
-# Configure Streamlit page
+# Configure Streamlit page with custom settings
 st.set_page_config(
     page_title="Data Report Analyzer",
     layout="wide",
     initial_sidebar_state="expanded",
     menu_items={
-        'Get Help': 'https://github.com/yourusername/Datasampublic',
-        'Report a bug': "https://github.com/yourusername/Datasampublic/issues",
+        'Get Help': 'https://github.com/ginug/Datasampublic',
+        'Report a bug': "https://github.com/ginug/Datasampublic/issues",
         'About': "# Data Report Analyzer\nAn AI-powered tool for analyzing data reports."
     }
 )
 
-# Initialize session state
+# Initialize session state for persistent storage
 if "query_history" not in st.session_state:
     st.session_state.query_history = []
 if "api_keys" not in st.session_state:
@@ -26,11 +26,12 @@ if "api_keys" not in st.session_state:
         "perplexity": ""
     }
 
-# Custom CSS
+# Custom CSS for consistent styling
 st.markdown("""
     <style>
     .main {
         padding: 2rem;
+        background-color: #0E1117;
     }
     .stTitle {
         color: #1E88E5;
@@ -42,39 +43,109 @@ st.markdown("""
         padding-bottom: 0.5rem;
     }
     .insight-box {
-        background-color: #121212;
+        background-color: #1E1E1E;
         border-radius: 10px;
         padding: 20px;
         margin: 10px 0;
         border-left: 5px solid #1E88E5;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
     .evidence-box {
-        background-color: #121212;
+        background-color: #1E1E1E;
         border-radius: 10px;
         padding: 20px;
         margin: 10px 0;
         border-left: 5px solid #43a047;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
     .query-box {
-        background-color: #121212;
+        background-color: #1E1E1E;
         border-radius: 10px;
         padding: 20px;
         margin: 10px 0;
-        border-left: 5px solid #ef6c00;
+        border-left: 5px solid #ffd700;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
     .api-key-input {
         background-color: #1E1E1E;
         padding: 10px;
         border-radius: 5px;
         margin: 5px 0;
+        border: 1px solid #333333;
+    }
+    .stButton>button {
+        background-color: #1E88E5;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+    }
+    .stButton>button:hover {
+        background-color: #1565C0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .stMarkdown {
+        color: #FFFFFF;
+    }
+    .stTextInput>div>div>input {
+        background-color: #1E1E1E;
+        border: 1px solid #333333;
+        border-radius: 5px;
+        color: #FFFFFF;
+    }
+    .stSelectbox>div>div>select {
+        background-color: #1E1E1E;
+        border: 1px solid #333333;
+        border-radius: 5px;
+        color: #FFFFFF;
+    }
+    .stExpander {
+        background-color: #1E1E1E;
+        border: 1px solid #333333;
+        border-radius: 5px;
+        margin: 10px 0;
+    }
+    .stDataFrame {
+        background-color: #1E1E1E;
+        border: 1px solid #333333;
+        border-radius: 5px;
+    }
+    /* Ensure all text has good contrast */
+    .stMarkdown, .stTextInput label, .stSelectbox label, .stExpander label {
+        color: #FFFFFF !important;
+    }
+    /* Style for sidebar headers */
+    .css-1d391kg .sidebar-content h1, 
+    .css-1d391kg .sidebar-content h2, 
+    .css-1d391kg .sidebar-content h3 {
+        color: #1E88E5 !important;
+    }
+    /* Override any light theme styles */
+    [data-testid="stSidebar"] {
+        background-color: #0E1117 !important;
+    }
+    [data-testid="stSidebar"] * {
+        background-color: #0E1117 !important;
+    }
+    /* Ensure links are visible */
+    a {
+        color: #1E88E5 !important;
+    }
+    a:hover {
+        color: #1565C0 !important;
+    }
+    /* Ensure placeholder text is visible but slightly muted */
+    ::placeholder {
+        color: #888888 !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Header with description
-st.title("📊 Data Report Analyzer")
+# Application header with description
+st.title("Report Analyzer")
 st.markdown("""
-    <div style='background-color: #0F172A; padding: 1rem; border-radius: 10px; margin-bottom: 2rem;'>
+    <div style='background-color: #1E1E1E; padding: 1rem; border-radius: 10px; margin-bottom: 2rem; border: 1px solid #333333; color: #FFFFFF;'>
         Upload your data files to get AI-powered insights and analysis. This tool helps you:
         * 📈 Analyze CSV data files
         * 📝 Process text appendices
@@ -83,7 +154,7 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Create two columns for file uploaders
+# File upload section with two columns
 col1, col2 = st.columns(2)
 
 with col1:
@@ -94,7 +165,7 @@ with col2:
     st.markdown("### 📄 Upload Appendix Text")
     appendix_file = st.file_uploader("Choose a text file", type="txt")
 
-# Model configuration
+# Model configuration for different AI services
 MODEL_CONFIGS = {
     "DeepSeek R1": {
         "base_url": "https://api.perplexity.ai",
@@ -113,7 +184,7 @@ MODEL_CONFIGS = {
     }
 }
 
-# Add model selector in sidebar
+# Model selection in sidebar
 st.sidebar.title("Model Settings")
 selected_model = st.sidebar.selectbox(
     "Choose AI Model",
@@ -121,7 +192,7 @@ selected_model = st.sidebar.selectbox(
     index=0  # Default to DeepSeek R1
 )
 
-# API Key Input Section in sidebar
+# API Key input section in sidebar
 st.sidebar.markdown("### 🔑 API Keys")
 st.sidebar.markdown("""
     <div class='api-key-input'>
@@ -129,7 +200,7 @@ st.sidebar.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# OpenAI API Key Input
+# API Key inputs with secure password fields
 openai_key = st.sidebar.text_input(
     "OpenAI API Key",
     type="password",
@@ -138,7 +209,6 @@ openai_key = st.sidebar.text_input(
 )
 st.session_state.api_keys["openai"] = openai_key
 
-# Perplexity API Key Input
 perplexity_key = st.sidebar.text_input(
     "Perplexity API Key",
     type="password",
@@ -147,8 +217,19 @@ perplexity_key = st.sidebar.text_input(
 )
 st.session_state.api_keys["perplexity"] = perplexity_key
 
-# Initialize the selected client
 def get_client(model_name):
+    """
+    Initialize and return the appropriate API client based on the selected model.
+    
+    Args:
+        model_name (str): Name of the selected model
+        
+    Returns:
+        OpenAI: Configured client for the selected service
+        
+    Raises:
+        st.stop(): If API key is missing or client initialization fails
+    """
     config = MODEL_CONFIGS[model_name]
     
     if config["service"] == "openai":
@@ -170,16 +251,36 @@ def get_client(model_name):
             st.error("⚠️ Please enter your Perplexity API key in the sidebar.")
             st.stop()
         try:
-            # Create client without any proxy settings
-            client = OpenAI()
-            client.base_url = "https://api.perplexity.ai"
-            client.api_key = api_key
-            return client
+            # Set environment variable for Perplexity API key
+            os.environ["OPENAI_API_KEY"] = api_key
+            
+            # Create client with all parameters at initialization
+            return OpenAI(
+                api_key=api_key,
+                base_url="https://api.perplexity.ai",
+                default_headers={
+                    "Authorization": f"Bearer {api_key}"
+                }
+            )
         except Exception as e:
             st.error(f"⚠️ Error initializing Perplexity client: {str(e)}")
             st.stop()
 
 def get_insights(client, model_name, messages):
+    """
+    Generate insights using the selected AI model.
+    
+    Args:
+        client (OpenAI): Configured API client
+        model_name (str): Name of the selected model
+        messages (list): List of message dictionaries for the API call
+        
+    Returns:
+        str: Generated response from the AI model
+        
+    Raises:
+        st.stop(): If API call fails
+    """
     with st.spinner('🤔 Analyzing...'):
         config = MODEL_CONFIGS[model_name]
         
@@ -199,10 +300,24 @@ def get_insights(client, model_name, messages):
                 "presence_penalty": 0
             })
         
-        response = client.chat.completions.create(**params)
-        return response.choices[0].message.content.strip()
+        try:
+            response = client.chat.completions.create(**params)
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            st.error(f"Error during API call: {str(e)}")
+            st.stop()
 
 def handle_file_upload(file, file_type="csv"):
+    """
+    Handle file upload and return processed data.
+    
+    Args:
+        file: Uploaded file object
+        file_type (str): Type of file ("csv" or "txt")
+        
+    Returns:
+        Union[pd.DataFrame, str]: Processed data as DataFrame for CSV or string for text
+    """
     try:
         if file is None:
             return None
@@ -226,7 +341,7 @@ def handle_file_upload(file, file_type="csv"):
         st.error(f"Error processing file: {str(e)}")
         return None
 
-# Load and display data with error handling
+# Load and display uploaded data
 if summary_file is not None:
     with st.expander("📊 Summary Report", expanded=True):
         with st.spinner("Loading CSV file..."):
@@ -241,11 +356,11 @@ if appendix_file is not None:
             if appendix_text is not None:
                 st.text_area("Appendix Content", appendix_text, height=200)
 
-# Analysis Section
+# Analysis section
 if summary_file and appendix_file:
     st.markdown("---")
     
-    # Add Run Analysis button
+    # Run Analysis button
     run_analysis = st.button("🚀 Run Analysis", type="primary")
     
     if run_analysis:
@@ -253,7 +368,7 @@ if summary_file and appendix_file:
         summary_content = summary_file.getvalue().decode("utf-8")
         appendix_content = appendix_file.getvalue().decode("utf-8")
 
-        # Main Insights
+        # Generate main insights
         st.markdown("### 🎯 Key Insights")
         insights_messages = [
             {"role": "system", "content": "You are a helpful assistant specialized in data analysis."},
@@ -262,7 +377,7 @@ if summary_file and appendix_file:
         insights = get_insights(client, selected_model, insights_messages)
         st.markdown(f'<div class="insight-box">{insights}</div>', unsafe_allow_html=True)
 
-        # Evidence
+        # Generate supporting evidence
         st.markdown("### 📊 Supporting Evidence")
         evidence_messages = [
             {"role": "system", "content": "You are a helpful assistant specialized in data analysis."},
@@ -271,7 +386,7 @@ if summary_file and appendix_file:
         evidence_response = get_insights(client, selected_model, evidence_messages)
         st.markdown(f'<div class="evidence-box">{evidence_response}</div>', unsafe_allow_html=True)
 
-    # Custom Query Section with history
+    # Custom Query section with history
     st.markdown("### 🔍 Custom Query")
     query_container = st.container()
     

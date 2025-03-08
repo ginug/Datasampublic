@@ -1,5 +1,6 @@
-# Environment variables
-.env
+# Git
+.git
+.gitignore
 
 # Python
 __pycache__/
@@ -7,6 +8,7 @@ __pycache__/
 *$py.class
 *.so
 .Python
+env/
 build/
 develop-eggs/
 dist/
@@ -26,8 +28,6 @@ wheels/
 # Virtual Environment
 venv/
 ENV/
-env/
-.env/
 
 # IDE
 .idea/
@@ -35,10 +35,15 @@ env/
 *.swp
 *.swo
 
-# OS
-.DS_Store
-Thumbs.db
-
 # Docker
-.docker/
-docker-compose.override.yml 
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Cloud
+cloudbuild.yaml
+.env
+
+# Misc
+.DS_Store
+*.log 
